@@ -9,7 +9,8 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+
+import org.antlr.v4.runtime.misc.NotNull;
 
 @Entity
 @Table(name = "posts")
@@ -17,9 +18,12 @@ public class Post
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private UUID id;  
-    private String name;                  
-    private String text;              
+    private int id;  
+    @Column(nullable = false) 
+    private String name;   
+    @Column(nullable = false)                
+    private String text; 
+    @Column(nullable = false)             
     private LocalDateTime creationTime; 
     private int upvotes;              
     private int downvotes;    
@@ -29,9 +33,14 @@ public class Post
     private double computedScore;      
     /*?? */  
 
+    public Post()
+    {
+        this.creationTime = LocalDateTime.now();
+        this.computedScore = 0;
+    }
     public Post(String name, String text)
     {
-        this.id = UUID.randomUUID();
+        this.id = id;
         this.name = name;
         this.text = text;
         this.creationTime = LocalDateTime.now();
@@ -41,11 +50,11 @@ public class Post
     }
 
 
-    public UUID getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -87,6 +96,26 @@ public class Post
 
     public void setDownvotes(int downvotes) {
         this.downvotes = downvotes;
+    }
+/*********************************************************************************************/
+    public double getComputedScore()
+    {
+        return computedScore;
+    }  
+
+    public void  setComputedScore(double computedScore)
+    {
+        this.computedScore = computedScore;
+    }    
+/*********************************************************************************************/
+    public void addUpvote() 
+    {
+        this.upvotes++;
+    }
+
+    // Downvote method
+    public void addDownvote() {
+        this.downvotes++;
     }
 
 }

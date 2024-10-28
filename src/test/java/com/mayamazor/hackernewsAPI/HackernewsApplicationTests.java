@@ -1,10 +1,10 @@
-package com.post.demo;
+package com.mayamazor.hackernewsAPI;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class DemoApplicationTests {
+class HackernewsApplicationTests {
 
 	@Test
 	void contextLoads() {
