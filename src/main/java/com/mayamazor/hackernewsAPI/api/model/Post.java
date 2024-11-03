@@ -1,52 +1,63 @@
 package com.mayamazor.hackernewsAPI.api.model;
 
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
+import org.springframework.data.annotation.CreatedDate;
 
-import org.antlr.v4.runtime.misc.NotNull;
 
 @Entity
 @Table(name = "posts")
+
 public class Post
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;  
+
+    @NotNull
+    @Size(min = 1)
     @Column(nullable = false) 
-    private String name;   
+    private String name;
+
+    @NotNull
+    @Size(min = 1)
     @Column(nullable = false)                
     private String text; 
-    @Column(nullable = false)             
-    private LocalDateTime creationTime; 
-    private int upvotes;              
-    private int downvotes;    
 
-    /*?? */  
-    @Transient
-    private double computedScore;      
-    /*?? */  
+    @CreatedDate
+    @Column(nullable = false, updatable = false)        
+    private LocalDateTime creationTime;
 
-    public Post()
-    {
-        this.creationTime = LocalDateTime.now();
-        this.computedScore = 0;
-    }
+    @Min(value = 0)
+    private int voteCount;
+
+    @NotNull
+    @Column(nullable = false)  
+    private String link;
+
+    private double computedScore = 0;
+
+
+    public Post(){}
+    
     public Post(String name, String text)
     {
-        this.id = id;
         this.name = name;
         this.text = text;
-        this.creationTime = LocalDateTime.now();
-        this.upvotes = 0;
-        this.downvotes = 0;
-        this.computedScore = 0;
+        this.voteCount = 0;
     }
 
 
@@ -78,44 +89,42 @@ public class Post
         return creationTime;
     }
 
-    public void setCreationTime(LocalDateTime creationTime) {
-        this.creationTime = creationTime;
+    @PrePersist
+    public void setCreationTime()
+    {
+        if (this.creationTime == null)
+        {
+            this.creationTime = LocalDateTime.now();
+        }
     }
 
-    public int getUpvotes() {
-        return upvotes;
+    public int getVoteCount() {
+        return voteCount;
     }
 
-    public void setUpvotes(int upvotes) {
-        this.upvotes = upvotes;
+     public void addUpvote() 
+    {
+        ++this.voteCount;
     }
 
-    public int getDownvotes() {
-        return downvotes;
+    // Downvote method
+    public void addDownvote() {
+        this.voteCount = Math.max(0, --this.voteCount);
     }
 
-    public void setDownvotes(int downvotes) {
-        this.downvotes = downvotes;
-    }
 /*********************************************************************************************/
     public double getComputedScore()
     {
         return computedScore;
     }  
 
-    public void  setComputedScore(double computedScore)
+    @PreUpdate
+    public void updateComputedScore()
     {
-        this.computedScore = computedScore;
+        long hoursSinceCreation = Duration.between(this.creationTime, LocalDateTime.now()).toHours(); 
+        this.computedScore= voteCount / Math.pow((hoursSinceCreation + 2), 1.5);
     }    
 /*********************************************************************************************/
-    public void addUpvote() 
-    {
-        this.upvotes++;
-    }
-
-    // Downvote method
-    public void addDownvote() {
-        this.downvotes++;
-    }
-
+   //getlink
+   //setlink
 }

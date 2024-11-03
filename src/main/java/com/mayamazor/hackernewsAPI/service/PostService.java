@@ -35,27 +35,27 @@ public class PostService {
 
     public List<Post> getTopPosts() 
     {
-        List<Post>posts = postRepository.findAll();
+        List<Post> posts = postRepository.findAll();
 
-        for(Post post : posts)
-        {
-            if (post.getCreationTime() == null)
-            {
-                continue;
-            }
-            post.setComputedScore(calculatePostScore(post));
-        }
+       
         return posts.stream()
-                .sorted((p1, p2) -> Double.compare(p2.getComputedScore(), p1.getComputedScore()))
+                .filter(post -> post.getCreationTime() != null) // Ensure creationTime is not null
+                .sorted((p1, p2) -> Double.compare(p2.getComputedScore(), p1.getComputedScore())) // Sort by computed score descending
                 .collect(Collectors.toList());
     }
         
-    public double calculatePostScore(Post post) {
-        int votes = post.getUpvotes() - post.getDownvotes();
-        long hoursSinceCreation = Duration.between(post.getCreationTime(), LocalDateTime.now()).toHours();
-        double gravity = 1.5;  
-        return votes / Math.pow((hoursSinceCreation + 2), gravity);
-    }
+    /*List<Post>posts = postRepository.findAll();
 
-    
+    for(Post post : posts)
+    {
+        if (post.getCreationTime() == null)
+        {
+            continue;
+        }
+        post.setComputedScore(calculatePostScore(post));
+    }
+    return posts.stream()
+            .sorted((p1, p2) -> Double.compare(p2.getComputedScore(), p1.getComputedScore()))
+            .collect(Collectors.toList());
+    */
 }

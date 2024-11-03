@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import com.mayamazor.hackernewsAPI.api.model.Post;
 
 @Repository
-public interface PostRepository extends JpaRepository<Post, Integer> {
-    
+public interface PostRepository extends JpaRepository<Post, Integer> 
+{
+        
 }

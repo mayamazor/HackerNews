@@ -9,20 +9,27 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
-     <groupId>com.mayamazor</groupId>
+    <groupId>com.mayamazor</groupId>
     <artifactId>hackernews</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
-
-	
-	
-
 
 	<properties>
         <java.version>17</java.version>
     </properties>
 
     <dependencies>
+        <!-- Redis dependencies -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+       <dependency>
+            <groupId>io.lettuce</groupId>
+            <artifactId>lettuce-core</artifactId>
+            <version>6.5.0.RELEASE</version>
+        </dependency>
+
         <!-- Spring Boot Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -48,7 +55,26 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+            <version>3.0.2</version> <!-- or latest version -->
+        </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <build>
         <plugins>
