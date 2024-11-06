@@ -6,6 +6,7 @@ import com.mayamazor.hackernewsAPI.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
@@ -20,12 +21,16 @@ public class PostController {
     // Create a new post
     @PostMapping("/posts")  
     public Post createPost(@RequestBody Post post) {  
-        return postService.savePost(post);  
+        Post savedPost = postService.savePost(post);
+        postService.updatePosts();
+        postService.updateTopPosts();
+        return savedPost;
     }
 
     // Get all posts
     @GetMapping("/posts")  
     public List<Post> getAllPosts() {  
+       
         return postService.getAllPosts();  
     }
     
@@ -48,6 +53,7 @@ public class PostController {
     }
 
     // // Upvote an existing post
+    @Transactional
     @PutMapping("/posts/{id}/upvote")
     public Post upvotePost(@PathVariable int id)
     {
@@ -56,7 +62,12 @@ public class PostController {
         {
             Post post = optionalPost.get();
             post.addUpvote(); 
-            return postService.savePost(post); 
+           // return postService.savePost(post); 
+           ///
+           postService.savePost(post); // Save the post
+           postService.updateTopPosts();
+           return post;
+           //
         }
         else
         {
@@ -65,6 +76,7 @@ public class PostController {
     }
 
      // // Downvote an existing post
+     @Transactional
      @PutMapping("/posts/{id}/downvote")
      public Post downvotePost(@PathVariable int id)
      {
@@ -73,7 +85,12 @@ public class PostController {
          {
             Post post = optionalPost.get();
             post.addDownvote();
-            return postService.savePost(post); 
+            //return postService.savePost(post); 
+            ///
+           postService.savePost(post); // Save the post
+           postService.updateTopPosts();
+           return post;
+           //
          }
          else
          {
@@ -86,4 +103,11 @@ public class PostController {
         return postService.getTopPosts();
     }
     
+
+    //clear
+    @DeleteMapping("/posts/cache/clear")
+    public ResponseEntity<String> clearPostsCache() {
+        postService.clearCache();
+        return ResponseEntity.ok("Cache cleared successfully.");
+    }
 }
