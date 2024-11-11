@@ -27,7 +27,8 @@ public class PostService {
     // Create a new post
     // @CacheEvict(value = "Posts")
     @CachePut(value = "Posts", key = "#post.id") 
-    public Post savePost(Post post) {  
+    public Post savePost(Post post)
+    {  
         return postRepository.save(post);
     }
 
@@ -79,11 +80,15 @@ public class PostService {
     }
 
     //clear
-    public void clearCache() {
-        if (cacheManager.getCache("posts") != null) {
+    public void clearCache() 
+    {
+        if (cacheManager.getCache("posts") != null)
+        {
             cacheManager.getCache("posts").clear();
             System.out.println("Cache for 'posts' has been cleared.");
-        } else {
+        }
+        else
+        {
             System.out.println("Cache for 'posts' does not exist.");
         }
     }

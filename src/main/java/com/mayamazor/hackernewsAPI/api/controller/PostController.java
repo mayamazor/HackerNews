@@ -20,31 +20,28 @@ public class PostController {
 
     // Create a new post
     @PostMapping("/posts")  
-    public Post createPost(@RequestBody Post post) {  
-        Post savedPost = postService.savePost(post);
-        postService.updatePosts();
-        postService.updateTopPosts();
-        return savedPost;
+    public Post createPost(@RequestBody Post post)
+    { 
+        return saveAndUpdateCache(post);
     }
 
     // Get all posts
     @GetMapping("/posts")  
-    public List<Post> getAllPosts() {  
-       
+    public List<Post> getAllPosts() 
+    {  
         return postService.getAllPosts();  
     }
     
-
     // update an existing post text
     @PutMapping("/posts/{id}")  
-    public Post updatePostText(@PathVariable int id,  @RequestBody UpdatePostRequest request)
+    public Post updatePostText(@PathVariable int id,  @RequestBody Post request)
     {
         Optional<Post> optionalPost = postService.getPostById(id);
         if(optionalPost.isPresent())
         {
             Post post = optionalPost.get(); 
             post.setText(request.getText());
-            return postService.savePost(post); 
+            return saveAndUpdateCache(post);
         }
         else
         {
@@ -62,12 +59,7 @@ public class PostController {
         {
             Post post = optionalPost.get();
             post.addUpvote(); 
-           // return postService.savePost(post); 
-           ///
-           postService.savePost(post); // Save the post
-           postService.updateTopPosts();
-           return post;
-           //
+            return saveAndUpdateCache(post);
         }
         else
         {
@@ -85,12 +77,7 @@ public class PostController {
          {
             Post post = optionalPost.get();
             post.addDownvote();
-            //return postService.savePost(post); 
-            ///
-           postService.savePost(post); // Save the post
-           postService.updateTopPosts();
-           return post;
-           //
+            return saveAndUpdateCache(post);
          }
          else
          {
@@ -99,15 +86,26 @@ public class PostController {
      }
 
     @GetMapping("/posts/top")
-    public List<Post> getTopPosts() {
+    public List<Post> getTopPosts()
+    {
         return postService.getTopPosts();
     }
     
 
     //clear
     @DeleteMapping("/posts/cache/clear")
-    public ResponseEntity<String> clearPostsCache() {
+    public ResponseEntity<String> clearPostsCache()
+    {
         postService.clearCache();
         return ResponseEntity.ok("Cache cleared successfully.");
+    }
+
+    //update all
+    public Post saveAndUpdateCache(Post post) 
+    {
+        Post savedPost = postService.savePost(post);
+        postService.updatePosts();
+        postService.updateTopPosts();
+        return savedPost;
     }
 }
